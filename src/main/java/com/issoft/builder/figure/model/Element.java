@@ -11,10 +11,14 @@ import javax.persistence.MappedSuperclass;
 @Data
 @MappedSuperclass
 @JsonIgnoreProperties(value = "position", allowGetters = true)
-public class Element {
+public abstract class Element {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private int position;
+
+    public void shiftRight() {
+        position += 1;
+    }
 }

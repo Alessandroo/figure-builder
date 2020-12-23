@@ -1,13 +1,8 @@
 package com.issoft.builder.figure.service;
 
-import com.issoft.builder.figure.factory.FigureRepositoryFactory;
-import com.issoft.builder.figure.model.Figure;
 import com.issoft.builder.figure.model.Group;
 import com.issoft.builder.figure.model.Picture;
-import com.issoft.builder.figure.repository.FigureRepository;
-import com.issoft.builder.figure.repository.GroupRepository;
 import com.issoft.builder.figure.repository.PictureRepository;
-import com.issoft.builder.figure.utils.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,18 +11,13 @@ import java.util.List;
 
 @Service
 public class PictureService {
-    private final FigureRepositoryFactory figureRepositoryFactory;
-
-    private final GroupRepository groupRepository;
+    private final GroupService groupService;
 
     private final PictureRepository pictureRepository;
 
     @Autowired
-    public PictureService(FigureRepositoryFactory figureRepositoryFactory,
-                          GroupRepository groupRepository,
-                          PictureRepository pictureRepository) {
-        this.figureRepositoryFactory = figureRepositoryFactory;
-        this.groupRepository = groupRepository;
+    public PictureService(GroupService groupService, PictureRepository pictureRepository) {
+        this.groupService = groupService;
         this.pictureRepository = pictureRepository;
     }
 
@@ -49,31 +39,8 @@ public class PictureService {
 
     public Picture savePicture(Picture picture) {
         Group rootGroup = picture.getGroup();
-        saveGroup(rootGroup);
+        groupService.saveGroup(rootGroup);
         return pictureRepository.save(picture);
-    }
-
-    public Group saveGroup(Group parentGroup) {
-        parentGroup = groupRepository.save(parentGroup);
-
-        for (ListUtils.EnumeratedItem<Figure> figureItem : ListUtils.enumerate(parentGroup.getChildFigures())) {
-            Figure figure = figureItem.item;
-            figure.setGroup(parentGroup);
-            figure.setPosition(figureItem.index);
-
-            FigureRepository figureRepository = figureRepositoryFactory.findRepository(figure);
-            figureRepository.save(figure);
-        }
-
-        for (ListUtils.EnumeratedItem<Group> groupItem : ListUtils.enumerate(parentGroup.getChildGroups())) {
-            Group group = groupItem.item;
-            group.setParent(parentGroup);
-            group.setPosition(groupItem.index);
-
-            saveGroup(group);
-        }
-
-        return parentGroup;
     }
 
     public void deletePicture(Long id) {
