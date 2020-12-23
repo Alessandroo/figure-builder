@@ -16,7 +16,7 @@ public class FigureService {
 
     public Figure updateFigure(@RequestBody Figure figure) {
         if (figure.getId() < 1) {
-            throw new IllegalArgumentException("Picture has to have id.");
+            throw new IllegalArgumentException("Figure has to have id.");
         }
         return saveFigure(figure);
     }

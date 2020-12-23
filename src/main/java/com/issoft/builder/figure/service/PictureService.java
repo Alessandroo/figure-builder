@@ -1,15 +1,13 @@
 package com.issoft.builder.figure.service;
 
 import com.issoft.builder.figure.factory.FigureRepositoryFactory;
-import com.issoft.builder.figure.model.Circle;
 import com.issoft.builder.figure.model.Figure;
 import com.issoft.builder.figure.model.Group;
 import com.issoft.builder.figure.model.Picture;
-import com.issoft.builder.figure.model.Square;
-import com.issoft.builder.figure.model.Triangle;
 import com.issoft.builder.figure.repository.FigureRepository;
 import com.issoft.builder.figure.repository.GroupRepository;
 import com.issoft.builder.figure.repository.PictureRepository;
+import com.issoft.builder.figure.utils.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -57,19 +55,24 @@ public class PictureService {
 
     public Group saveGroup(Group parentGroup) {
         parentGroup = groupRepository.save(parentGroup);
-        if (parentGroup.getChildFigures() != null) {
-            for (Figure figure : parentGroup.getChildFigures()) {
-                figure.setGroup(parentGroup);
-                FigureRepository figureRepository = figureRepositoryFactory.findRepository(figure);
-                figureRepository.save(figure);
-            }
+
+        for (ListUtils.EnumeratedItem<Figure> figureItem : ListUtils.enumerate(parentGroup.getChildFigures())) {
+            Figure figure = figureItem.item;
+            figure.setGroup(parentGroup);
+            figure.setPosition(figureItem.index);
+
+            FigureRepository figureRepository = figureRepositoryFactory.findRepository(figure);
+            figureRepository.save(figure);
         }
-        if (parentGroup.getChildGroups() != null) {
-            for (Group group : parentGroup.getChildGroups()) {
-                group.setParent(parentGroup);
-                saveGroup(group);
-            }
+
+        for (ListUtils.EnumeratedItem<Group> groupItem : ListUtils.enumerate(parentGroup.getChildGroups())) {
+            Group group = groupItem.item;
+            group.setParent(parentGroup);
+            group.setPosition(groupItem.index);
+
+            saveGroup(group);
         }
+
         return parentGroup;
     }
 
