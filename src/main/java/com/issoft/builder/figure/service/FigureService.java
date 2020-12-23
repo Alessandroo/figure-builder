@@ -1,16 +1,15 @@
 package com.issoft.builder.figure.service;
 
-import com.issoft.builder.figure.factory.FigureRepositoryFactory;
 import com.issoft.builder.figure.model.Figure;
 import com.issoft.builder.figure.repository.FigureRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FigureService {
-    private final FigureRepositoryFactory figureRepositoryFactory;
+    private final FigureRepository figureRepository;
 
-    public FigureService(FigureRepositoryFactory figureRepositoryFactory) {
-        this.figureRepositoryFactory = figureRepositoryFactory;
+    public FigureService(FigureRepository figureRepository) {
+        this.figureRepository = figureRepository;
     }
 
     public Figure updateFigure(Figure figure) {
@@ -21,12 +20,10 @@ public class FigureService {
     }
 
     public Figure saveFigure(Figure figure) {
-        FigureRepository figureRepository = figureRepositoryFactory.findRepository(figure);
-        return (Figure) figureRepository.save(figure);
+        return figureRepository.save(figure);
     }
 
     public void deleteFigure(Figure figure) {
-        FigureRepository figureRepository = figureRepositoryFactory.findRepository(figure);
-        figureRepository.delete(figure);
+        figureRepository.deleteById(figure.getId());
     }
 }
