@@ -51,7 +51,7 @@ public class GroupController {
         groupService.moveFigure(parentGroup, oldPosition, newPosition);
     }
 
-    @ApiOperation("Update group and its children properties. Modification group structure can lead to unpredictable behavior.")
+    @ApiOperation("Update group properties. Modification children properties is not allowed here.")
     @PostMapping
     public Group updateGroup(@RequestBody Group group) {
         return groupService.updateGroup(group);

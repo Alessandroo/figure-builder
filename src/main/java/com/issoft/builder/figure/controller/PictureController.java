@@ -42,7 +42,7 @@ public class PictureController {
         return pictureService.getPictureNames();
     }
 
-    @ApiOperation("Update picture and its children properties. Modification group structure can lead to unpredictable behavior.")
+    @ApiOperation("Update picture properties. Modification children properties is not allowed here.")
     @PostMapping
     public Picture updatePicture(@RequestBody Picture picture) {
         return pictureService.updatePicture(picture);

@@ -6,6 +6,7 @@ import com.issoft.builder.figure.model.Group;
 import com.issoft.builder.figure.repository.FigureRepository;
 import com.issoft.builder.figure.repository.GroupRepository;
 import com.issoft.builder.figure.utils.ListUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +27,12 @@ public class GroupService {
     }
 
     public Group updateGroup(Group group) {
-        if (group.getId() < 1) {
-            throw new IllegalArgumentException("Group has to have id.");
-        }
+        Group groupToUpdate = groupRepository.findById(group.getId()).orElseThrow(
+                () -> new IllegalArgumentException("Group is not exist")
+        );
+        BeanUtils.copyProperties(group, groupToUpdate, "parent", "childGroups", "childFigures");
 
-        return groupRepository.save(group);
+        return groupRepository.save(groupToUpdate);
     }
 
     public void deleteGroup(Long id) {

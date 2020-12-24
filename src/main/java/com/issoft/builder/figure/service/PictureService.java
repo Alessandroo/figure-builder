@@ -3,6 +3,7 @@ package com.issoft.builder.figure.service;
 import com.issoft.builder.figure.model.Group;
 import com.issoft.builder.figure.model.Picture;
 import com.issoft.builder.figure.repository.PictureRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,11 @@ import java.util.List;
 @Service
 public class PictureService {
     private final GroupService groupService;
-
     private final PictureRepository pictureRepository;
 
     @Autowired
-    public PictureService(GroupService groupService, PictureRepository pictureRepository) {
+    public PictureService(GroupService groupService,
+                          PictureRepository pictureRepository) {
         this.groupService = groupService;
         this.pictureRepository = pictureRepository;
     }
@@ -30,18 +31,16 @@ public class PictureService {
     }
 
     public Picture getPicture(long id) {
-        if (id < 1) {
-            throw new IllegalArgumentException("Picture has to have correct id > 0.");
-        }
-        return pictureRepository.getOne(id);
+        return pictureRepository.findById(id).orElse(null);
     }
 
     public Picture updatePicture(Picture picture) {
-        if (picture.getId() < 1) {
-            throw new IllegalArgumentException("Picture has to have id.");
-        }
+        Picture pictureToUpdate = pictureRepository.findById(picture.getId()).orElseThrow(
+                () -> new IllegalArgumentException("Picture is not exist")
+        );
+        BeanUtils.copyProperties(picture, pictureToUpdate, "createdDate", "modificationDate", "group");
 
-        return pictureRepository.save(picture);
+        return pictureRepository.save(pictureToUpdate);
     }
 
     public Picture savePicture(Picture picture) {
