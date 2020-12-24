@@ -2,6 +2,7 @@ package com.issoft.builder.figure.controller;
 
 import com.issoft.builder.figure.model.Picture;
 import com.issoft.builder.figure.service.PictureService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,26 +24,37 @@ public class PictureController {
         this.pictureService = pictureService;
     }
 
+    @ApiOperation("Get all pictures ordered by last modification date.")
     @GetMapping
     public List<Picture> getPictures() {
         return pictureService.getPictures();
     }
 
+    @ApiOperation("Get picture by id.")
+    @GetMapping("/picture")
+    public Picture getPicture(long id) {
+        return pictureService.getPicture(id);
+    }
+
+    @ApiOperation("Get all picture names ordered by last modification date.")
     @GetMapping("/names")
     public List<String> getPictureNames() {
         return pictureService.getPictureNames();
     }
 
+    @ApiOperation("Update picture and its children properties. Modification group structure can lead to unpredictable behavior.")
     @PostMapping
     public Picture updatePicture(@RequestBody Picture picture) {
         return pictureService.updatePicture(picture);
     }
 
+    @ApiOperation("Save picture and its child elements.")
     @PutMapping
     public Picture savePicture(@RequestBody Picture picture) {
         return pictureService.savePicture(picture);
     }
 
+    @ApiOperation("Delete picture and its child elements.")
     @DeleteMapping
     public void deletePicture(Long id) {
         pictureService.deletePicture(id);

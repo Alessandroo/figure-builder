@@ -29,6 +29,13 @@ public class PictureService {
         return pictureRepository.getPictureNamesOrderedByModificationDate();
     }
 
+    public Picture getPicture(long id) {
+        if (id < 1) {
+            throw new IllegalArgumentException("Picture has to have correct id > 0.");
+        }
+        return pictureRepository.getOne(id);
+    }
+
     public Picture updatePicture(Picture picture) {
         if (picture.getId() < 1) {
             throw new IllegalArgumentException("Picture has to have id.");
